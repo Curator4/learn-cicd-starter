@@ -33,3 +33,6 @@ jobs:
 
       - name: 'Build and push Docker image'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/ultra-resolver-479611-n2/notely-ar-repo/notely:latest'
+
+      - name: 'deploy to cloud run'
+        run: 'gcloud run deploy notely --image us-central1-docker.pkg.dev/ultra-resolver-479611-n2/notely-ar-repo/notely:latest --region us-central1 --alow-unauthenticated --project ultra-resolver-479611-n2 --max-instances=4'
