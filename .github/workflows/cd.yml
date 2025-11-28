@@ -7,9 +7,6 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -23,19 +20,16 @@ jobs:
         run: ./scripts/buildprod.sh
 
       - id: 'auth'
-        name: 'auth to gcd'
+        name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: 'projects/146289605796/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-          service_account: 'cloud-run-deployer@ultra-resolver-479611-n2.iam.gserviceaccount.com'
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: 'set up cloud sdk'
-        uses: 'google-github-actions/setup-gcloud@v3'
-        with:
-          version: '>= 363.0.0'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: use gcloud cli
-        run: gcloud info
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
 
-      - name: submit image to google
-        run: gcloud builds submit --tag us-central1-docker.pkg.dev/ultra-resolver-479611-n2/notely-ar-repo/notely:latest
+      - name: 'Build and push Docker image'
+        run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/ultra-resolver-479611-n2/notely-ar-repo/notely:latest'
